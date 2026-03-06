@@ -9,6 +9,6 @@ venv/
 tools/cfr.jar
 data/workspaces/
 data/outputs/
-.streamlit/
+.pytest_cache/
 *.pyc
 .ruff_cache/
