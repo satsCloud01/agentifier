@@ -323,8 +323,60 @@ hr { border-color: #1e293b !important; }
     )
 
 
+def _inject_light_css():
+    """Override dark theme with light colors when user toggles to light mode."""
+    st.markdown("""<style>
+html, body, [data-testid="stAppViewContainer"] {
+    background-color: #f8fafc !important; color: #1e293b !important;
+}
+[data-testid="stSidebar"] {
+    background-color: #ffffff !important; border-right: 1px solid #e2e8f0 !important;
+}
+[data-testid="stHeader"] { background: rgba(248,250,252,0.8) !important; }
+h1 { color: #1e293b !important; } h2 { color: #334155 !important; } h3 { color: #475569 !important; }
+p, li { color: #475569 !important; } strong { color: #1e293b !important; }
+[data-testid="stSidebar"] .stRadio > label { color: #64748b !important; }
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label { color: #334155 !important; }
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover { background: #f1f5f9 !important; }
+.stButton > button { background: #f1f5f9 !important; color: #334155 !important; border: 1px solid #e2e8f0 !important; }
+.stButton > button:hover { background: #e2e8f0 !important; color: #1e293b !important; }
+.stButton > button[kind="primary"] { background: #6366f1 !important; color: #fff !important; }
+[data-testid="stMetric"] { background: #ffffff !important; border: 1px solid #e2e8f0 !important; }
+[data-testid="stMetricLabel"] { color: #64748b !important; }
+[data-testid="stMetricValue"] { color: #1e293b !important; }
+.stTabs [data-baseweb="tab-list"] { background: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
+.stTabs [data-baseweb="tab"] { color: #64748b !important; }
+.stTabs [aria-selected="true"] { color: #6366f1 !important; background: #f1f5f9 !important; }
+.stTabs [data-baseweb="tab-panel"] { background: #ffffff !important; border-color: #e2e8f0 !important; }
+[data-testid="stExpander"] { background: #ffffff !important; border-color: #e2e8f0 !important; }
+[data-testid="stExpander"] summary { color: #334155 !important; }
+[data-testid="stExpander"] summary:hover { background: #f1f5f9 !important; }
+.stTextInput input, .stTextArea textarea { background: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important; }
+.stSelectbox div[data-baseweb="select"] > div { background: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important; }
+.stCheckbox label { color: #334155 !important; }
+[data-testid="stFileUploader"] { background: #ffffff !important; border-color: #e2e8f0 !important; }
+.stCode, pre { background: #f8fafc !important; border-color: #e2e8f0 !important; }
+hr { border-color: #e2e8f0 !important; }
+.ag-card { background: #ffffff !important; border-color: #e2e8f0 !important; }
+.ag-card-header { color: #64748b !important; }
+.ag-badge { background: #f1f5f9 !important; color: #475569 !important; border-color: #e2e8f0 !important; }
+.ag-stat { background: #ffffff !important; border-color: #e2e8f0 !important; }
+.ag-stat-label { color: #64748b !important; }
+.ag-stat-value { color: #1e293b !important; }
+.ag-stat-sub { color: #64748b !important; }
+.ag-section-title { color: #64748b !important; border-bottom-color: #e2e8f0 !important; }
+.ag-page-title { color: #1e293b !important; }
+[data-testid="stSidebar"] .stCaption { color: #94a3b8 !important; }
+</style>""", unsafe_allow_html=True)
+
+
 def main():
+    if "theme" not in st.session_state:
+        st.session_state.theme = "dark"
+
     _inject_css()
+    if st.session_state.theme == "light":
+        _inject_light_css()
 
     # Sidebar
     with st.sidebar:
@@ -403,7 +455,17 @@ def main():
             '<div style="border-top:1px solid #1e293b;margin:12px 0;"></div>',
             unsafe_allow_html=True,
         )
+
+        theme_label = "☀️ Light Mode" if st.session_state.theme == "dark" else "🌙 Dark Mode"
+        if st.button(theme_label, key="theme_toggle", use_container_width=True):
+            st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
+            st.rerun()
+
         st.caption("Agentfier v0.1.0")
+        st.markdown(
+            "Developed by **Sathish Siva Shankar**  \n"
+            "[View All Solutions →](https://my-solution-registry.satszone.link)",
+        )
 
     # Route to selected page
     if page == "⬡ Tour":
